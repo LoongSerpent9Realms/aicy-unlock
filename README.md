@@ -168,7 +168,7 @@ long-press entry opens `QuickVoiceController`, which reads the same global
 
 ## Accessibility feature removed (2.6.0)
 
-The `PowerOverlayService` AccessibilityService (tree scan + 
+The `PowerOverlayService` AccessibilityService (tree scan +
 `TYPE_ACCESSIBILITY_OVERLAY` power sheet) is gone — on Aicy it caused visible
 screen stutter. Power confirmation now runs entirely in-process: the ASR
 callback (`SpeechRecognitionCallback#onCall`, sherpa `OnlineRecognizer#getResult`)
