@@ -33,7 +33,7 @@ Aicy 助手 13.0.54–13.0.56 内置了完整的「模型设置」页面，但�
 
 ## 安装
 
-1. 安装 APK。若装过旧包 `dev.rikumi.aicyunlock`，先卸载。
+1. 安装 APK。
 2. 在 LSPosed / Vector 中启用 **Aicy Unlock**。
 3. 打开模块应用，点「申请 Aicy 作用域」；也可以在管理器里手动勾选 `com.meizu.voiceassistant`。
 4. 强行停止 Aicy 后重新打开。刚开机就安装的话，重启手机最稳。
