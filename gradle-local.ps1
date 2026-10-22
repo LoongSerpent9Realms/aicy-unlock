@@ -1,5 +1,5 @@
 $ErrorActionPreference = "Stop"
-$dist = "C:\Users\24951\.gradle\wrapper\dists\gradle-9.3.1-bin\23ovyewtku6u96viwx3xl3oks\gradle-9.3.1"
+$dist = Join-Path $env:USERPROFILE ".gradle\wrapper\dists\gradle-9.3.1-bin\23ovyewtku6u96viwx3xl3oks\gradle-9.3.1"
 $lib = Join-Path $dist "lib"
 $launcher = Join-Path $lib "gradle-launcher-9.3.1.jar"
 if (-not (Test-Path $launcher)) { throw "launcher not found: $launcher" }
