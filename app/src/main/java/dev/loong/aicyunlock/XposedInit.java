@@ -45,6 +45,8 @@ public final class XposedInit extends XposedModule {
     /** Which preset is active; negative means "engine has no 4.1.0 support". */
     private static final String WAKE_WORD_WHICH = "voice_switch_ver410_which";
     private static final String TAG = "AicyUnlock";
+    /** Window-probe label for the assistant itself; the cue must not fire in Aicy Touch. */
+    private static final String WHO_AICY = "aicy";
 
     private final AtomicBoolean installed = new AtomicBoolean(false);
     private final AtomicBoolean svaInstalled = new AtomicBoolean(false);
@@ -196,8 +198,7 @@ public final class XposedInit extends XposedModule {
                 String text = sb.toString();
                 boolean interesting = text.contains("分词") || text.contains("Aicy")
                         || text.contains("关键词") || text.contains("翻译");
-                boolean voice = view.getClass().getName().contains("voicequick")
-                        || view.getClass().getName().contains("QuickVoice");
+                boolean voice = WakeTone.isVoiceSheet(view.getClass().getName());
                 if (interesting) {
                     log(Log.INFO, TAG, text, null);
                     if (index <= 6) {
@@ -1522,6 +1523,36 @@ public final class XposedInit extends XposedModule {
         }
     }
 
+    /**
+     * The 12.5 style tone. Both wake routes - the spoken word and the power key
+     * ({@code flyme.intent.action.VOICE_COMMAND}, read with its own
+     * {@code is_voice_wake} flag) - end in this one startService call, and Aicy
+     * 13 simply stopped playing anything there.
+     */
+    private void installWakeTone(ClassLoader loader) {
+        try {
+            Class<?> service = Class.forName(
+                    "com.flyme.agentos.app.phone.voicequick.QuickVoiceService",
+                    false, loader);
+            Method onStart = service.getDeclaredMethod("onStartCommand",
+                    android.content.Intent.class, int.class, int.class);
+            install(onStart, chain -> {
+                try {
+                    Object arg = chain.getArgs().isEmpty() ? null : chain.getArgs().get(0);
+                    if (arg instanceof android.content.Intent) {
+                        WakeTone.onStartCommand((android.content.Intent) arg);
+                    }
+                } catch (Throwable ignored) {
+                    // a missing cue must never break the wake
+                }
+                return chain.proceed();
+            });
+            log(Log.INFO, TAG, "wake tone hooked", null);
+        } catch (Throwable error) {
+            log(Log.WARN, TAG, "wake tone unavailable", error);
+        }
+    }
+
     private void installFor(ClassLoader loader, String callback) {
         if (loader == null) {
             log(Log.ERROR, TAG, callback + ": null classloader, hooks not installed", null);
@@ -1536,7 +1567,8 @@ public final class XposedInit extends XposedModule {
         installWakeWordGate();
         installWakeWordCustomEntry(loader);
         installWakeWordPrivacyText(loader);
-        installWindowProbe(loader, "aicy");
+        installWakeTone(loader);
+        installWindowProbe(loader, WHO_AICY);
         probe(loader, "com.google.android.gms.internal.mlkit_vision_common.J3");
         probe(loader, "com.flyme.agentos.app.phone.PhoneApp$runtimeInitialization$1");
         probe(loader, "com.flyme.agentos.app.common.ui.settings.n0");

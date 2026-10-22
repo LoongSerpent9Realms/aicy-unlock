@@ -77,7 +77,7 @@ Write-Host "      manifest placeholders: $appId"
 # assets/ and the java resources are appended with aapt add below.
 & "$($bt.FullName)\aapt2.exe" link -o "$work\base.apk" -I $androidJar --manifest $manifest `
     "$work\res.zip" --java "$work\gen" --min-sdk-version 26 --target-sdk-version 35 `
-    --version-code 75 --version-name 2.8.11 --auto-add-overlay
+    --version-code 76 --version-name 2.8.12 --auto-add-overlay
 if ($LASTEXITCODE -ne 0) { throw "aapt2 link failed" }
 
 # Generated R.java has to be compiled too, then everything goes to d8.
@@ -158,7 +158,7 @@ $aligned = "$work\aligned.apk"
 if ($LASTEXITCODE -ne 0) { throw "zipalign failed" }
 
 $ks = "$env:USERPROFILE\.android\debug.keystore"
-$final = "$root\dist\aicy-unlock-2.8.11-debug.apk"
+$final = "$root\dist\aicy-unlock-2.8.12-debug.apk"
 New-Item -ItemType Directory -Force -Path "$root\dist" | Out-Null
 & "$($bt.FullName)\apksigner.bat" sign --ks $ks --ks-pass pass:android --key-pass pass:android `
     --ks-key-alias androiddebugkey --out $final $aligned

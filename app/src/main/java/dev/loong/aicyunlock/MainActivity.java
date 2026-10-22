@@ -56,7 +56,6 @@ public final class MainActivity extends Activity {
     private static final String SVA_PACKAGE = "com.qualcomm.qti.sva";
     private static final int ACCENT = 0xFF818CF8;
     private static final int CARD = 0xFF1C1C1E;
-    private static final int CARD_SOFT = 0xFF232326;
     private static final int TEXT = 0xFFE6E6E6;
     private static final int MUTED = 0xFF9BA0A6;
     private static final int OK = 0xFF4ADE80;
@@ -86,6 +85,66 @@ public final class MainActivity extends Activity {
     private static final String MIMO_PLATFORM_REF =
             "https://platform.xiaomimimo.com?ref=CCZX36";
     private static final String MIMO_CONSOLE = "https://platform.xiaomimimo.com";
+    private static final String GITHUB_URL =
+            "https://github.com/LoongSerpent9Realms/aicy-unlock";
+    private static final String ISSUES_URL = GITHUB_URL + "/issues";
+
+    private static final String GUIDE_INSTALL =
+            "需要 Root（Magisk 27+ / KernelSU / APatch）并开启 Zygisk；"
+          + "框架用 LSPosed 2.x、Vector 2.1+，或 LSPosed 1.9.2。\n\n"
+          + "1. 安装 APK（装过 dev.rikumi.aicyunlock 的先卸载）。\n"
+          + "2. 在管理器里启用 Aicy Unlock。\n"
+          + "3. 用本页「申请 Aicy 作用域」，或在管理器里手动勾选 "
+          + AICY_PACKAGE + "。\n"
+          + "4. 强行停止 Aicy 后重新打开。\n\n"
+          + "验证：\n"
+          + "• 界面：Aicy → 我的 → 设置。13.0.56 需先打开「临时打开模型设置页」。\n"
+          + "• 日志：管理器 → 日志，搜索 AicyUnlock，正常顺序是\n"
+          + "  module loaded → probe present → reveal armed → hooked。\n"
+          + "  连 module loaded 都没有，说明模块没注入（作用域 / 启用状态 / Zygisk）。";
+
+    private static final String GUIDE_MODEL =
+            "打开「临时打开 Aicy 的模型设置页」，进 Aicy → 我的 → 设置 →「模型设置」，"
+          + "服务商选「自定义」：\n\n"
+          + "• API 地址：http://192.168.1.x:1234/v1（电脑的局域网 IP，不是 127.0.0.1）\n"
+          + "• API Key：本地服务随便填，如 local\n"
+          + "• 模型名称：服务端真实的模型 id\n\n"
+          + "协议是 OpenAI 兼容的 /chat/completions（SSE 流式），"
+          + "OpenAI / DeepSeek / Moonshot / 硅基流动 / OpenRouter 等都可直接填 baseUrl。"
+          + "手机和电脑要在同一 Wi-Fi；LM Studio 需开启 Serve on Local Network，"
+          + "Ollama 需设置 OLLAMA_HOST=0.0.0.0。\n\n"
+          + "默认档位在「默认档位」卡片里选，模块会改写模型目录的 default_tier_id。"
+          + "Aicy 冷启动时读取，改完要强停 Aicy。选「自定义」前先配好自定义模型，"
+          + "否则该档位不存在，会自动回落到轻量。";
+
+    private static final String GUIDE_INTERCEPT =
+            "• 日志 / 遥测：默认断掉 uxip.meizu.com 与 api-savior.meizu.com，可在上方关掉。\n"
+          + "• 只用自带云模型：对话、路由、模型列表全部放行，体验与原版一致。\n"
+          + "• 自定义模型生效：切断 voice.meizu.com、llm-router-web.flyme.com、"
+          + "g.meizu.com、credits-api.flyme.com，以及技能 / 工具网关；登录与 OAuth 保留。\n"
+          + "• 判定每 3 秒刷新，改完模型设置自动切模式；日志里会打印 "
+          + "mode = CLOUD / CUSTOM。\n\n"
+          + "拦截点在 java.net.InetAddress 解析，与 HTTP 引擎无关；"
+          + "被拦的请求会写 BLOCKED egress。";
+
+    private static final String GUIDE_WAKE =
+            "电源键：Aicy 的「电源键唤醒」唤起 QuickVoice 浮层，它读的是同一套 model.* 配置。"
+          + "把「模型设置」配好即可，档位列表同样会多出「自定义」。\n\n"
+          + "自定义唤醒词：打开上方开关后，Aicy → 我的 → 设置 → 语音唤醒"
+          + "会直接进入隐藏的自定义唤醒词页，可以录入 / 重录或从建议词里选。"
+          + "关掉开关恢复系统原页面，已录入的词仍保留。";
+
+    private static final String GUIDE_MIMO =
+            "接口：默认 https://api.xiaomimimo.com/v1，可换成任何兼容的代理地址"
+          + "（OpenAI chat/completions + 流式音频，Bearer 鉴权）。\n\n"
+          + "模型：\n"
+          + "• mimo-v2.5-tts-voicedesign — 文字描述造音色\n"
+          + "• mimo-v2.5-tts-voiceclone — 音频样本复刻音色（mp3 / wav）\n"
+          + "• mimo-v2.5-tts — 预置音色（冰糖 / 茉莉 / 苏打 / 白桦 等）\n\n"
+          + "计费：官方标注限时免费，单价与免费时长未公布；"
+          + "用量与账单在 platform.xiaomimimo.com → 账单明细查看。本模块不收费。\n\n"
+          + "邀请码 CCZX36：双方各得 ¥10 体验金，首单 9 折，体验金 40 天有效。"
+          + "本页的「打开 MiMo 开放平台」链接已带码。";
 
     private EditText mimoKeyInput;
     /** 语音合成统一替换的 model id（留空 = 用音色自带的）。 */
@@ -166,114 +225,54 @@ public final class MainActivity extends Activity {
         powerPreview(root);
         diagCard(root);
         scopeCard(root);
-        section(root, "0 · 前提");
-        card(root, "需要 Root 环境",
-                "Magisk 27+ / KernelSU / APatch 之一，并开启 Zygisk（KernelSU 用 Zygisk Next）。\n\n"
-              + "框架：Vector 2.1+（JingMatrix 分支，开源）或 LSPosed 2.x 推荐；老的 LSPosed 1.9.2（API 100）也能载入本模块——入口同时实现了 onPackageLoaded 与 onPackageReady 两套回调。");
+        section(root, "快速上手");
+        step(root, 1, "启用模块", "在 LSPosed / Vector 里勾选 Aicy Unlock，并确认模块已启用。");
+        step(root, 2, "授权作用域", "点上方「申请 Aicy 作用域」，管理器确认一次即可。");
+        step(root, 3, "重启 Aicy", "强行停止 Aicy 后重新打开；刚开机就装的话直接重启手机。");
 
-        section(root, "1 · 安装");
-        step(root, 1, "安装模块 APK" , "装完桌面会出现「Aicy Unlock」。若装不上，先卸载旧包 dev.rikumi.aicyunlock。");
-        step(root, 2, "打开 LSPosed / Vector 管理器", "进「模块」页，勾选 Aicy Unlock，再点进模块确认已启用。");
-        step(root, 3, "作用域（动态申请）", "模块声明 staticScope=false，用本页上方「申请 Aicy 作用域」即可，管理器确认一次就长期生效；也可以在管理器里手动勾选。");
-        step(root, 4, "让 Aicy 重新加载", "设置 → 应用 → Aicy 助手 → 强行停止，然后重新打开 Aicy。刚开机就装的话，直接重启手机最稳。");
+        section(root, "使用说明");
+        LinearLayout guideCard = cardContainer();
+        infoRow(guideCard, "安装与验证", "Root、作用域、日志顺序", GUIDE_INSTALL);
+        infoRow(guideCard, "配置自定义模型", "接口四元组、本地网络、默认档位", GUIDE_MODEL);
+        infoRow(guideCard, "拦截逻辑", "什么时候切断魅族出口", GUIDE_INTERCEPT);
+        infoRow(guideCard, "电源键与唤醒词", "QuickVoice、自定义唤醒词", GUIDE_WAKE);
+        root.addView(guideCard);
 
-        section(root, "2 · 验证生效");
-        card(root, "A 界面验证",
-                "Aicy 里进「设置」（我的 → 设置），列表里应多出「模型设置」一项，点进去能看到服务商 / API 地址 / API Key / 模型名称 / 测试连接。");
-        card(root, "B 日志验证",
-                "管理器 → 日志 → 搜索 AicyUnlock，正常顺序是：\n\n"
-              + "  module loaded: framework=… api=…   ← 有这行说明模块被注入\n"
-              + "  probe …J3 -> present / MISSING     ← 看目标类在不在\n"
-              + "  flag scan … -> N static booleans   ← 结构发现结果\n"
-              + "  model-settings (BYOK) reveal armed\n"
-              + "  hooked … / skip hook …             ← 哪个钩子没绑上\n\n"
-              + "连 module loaded 都没有 = 模块根本没注入（作用域 / 启用状态 / 框架问题），与钩子无关。");
+        section(root, "常见问题");
+        LinearLayout faqCard = cardContainer();
+        questionRow(faqCard, "设置里没有「模型设置」",
+                "13.0.56 上先打开本页的「临时打开模型设置页」，再进 Aicy 设置。若还是没有，"
+              + "看下方「诊断」：没有 module loaded 说明模块没注入。");
+        questionRow(faqCard, "日志里没有 AicyUnlock",
+                "模块没注入。检查模块启用状态、作用域是否含 com.meizu.voiceassistant、"
+              + "Zygisk 是否开启，以及是否强停过 Aicy。");
+        questionRow(faqCard, "测试连接失败",
+                "多半是地址或网络：用电脑局域网 IP 而不是 127.0.0.1；"
+              + "确认电脑防火墙放行 1234 / 11434；模型名称必须是服务端 id。");
+        questionRow(faqCard, "配了自定义，自带模型也不能用了",
+                "预期行为：判定为自定义模式就会切断魅族对话出口。"
+              + "把服务商改回任意魅族内置项，3 秒内自动切回 CLOUD。");
+        questionRow(faqCard, "Aicy 升级后还生效吗",
+                "核心逻辑按结构特征发现，不绑版本号；13.0.54 的精确类名只用作加速路径。"
+              + "日志里的 probe MISSING 说明这一版换了包名或字段结构。");
+        questionRow(faqCard, "默认档位没生效 / 还在自动",
+                "目录在 Aicy 冷启动时读取：先在模块里选好「默认档位」，再强停 Aicy 重开。"
+              + "选了「自定义」但没配模型会回落到轻量。");
+        questionRow(faqCard, "选了「自定义」提示模型不存在",
+                "「模型设置」里的模型名称还是空的。填真实模型 id，再强停重开 Aicy。");
+        questionRow(faqCard, "想彻底回滚",
+                "在管理器里停用模块并强停 Aicy 即恢复原样，卸载本 APK 也可以。"
+              + "模块不修改 Aicy 的 APK 与数据。");
+        questionRow(faqCard, "唤醒词想恢复系统页面",
+                "关掉「自定义唤醒词」开关，再强停 Aicy。已录入的词由 Aicy 保存，不会丢。");
+        root.addView(faqCard);
 
-        section(root, "3 · 配置自定义模型");
-        card(root, "四元组",
-                "服务商：选「自定义」\n"
-              + "API 地址：http://192.168.1.x:1234/v1（电脑上跑 LM Studio/Ollama 时填电脑的局域网 IP）\n"
-              + "API Key：本地服务随便填，例如 local\n"
-              + "模型名称：必须是服务端真实的模型 id\n\n"
-              + "协议是 OpenAI 兼容的 /chat/completions（SSE 流式），所以 OpenAI / DeepSeek / Moonshot / 硅基流动 / OpenRouter / 通义兼容模式都能直接填 baseUrl。");
-        card(root, "测试连接前请注意",
-                "手机和电脑要在同一个 Wi-Fi；LM Studio 需在 Developer 页开启 Serve on Local Network，Ollama 需设置 OLLAMA_HOST=0.0.0.0。\n\n"
-              + "地址里的 127.0.0.1 指的是手机自己，不是你的电脑。");
-
-        section(root, "4 · 选择模型（档位）");
-        card(root, "默认档位可自由设置",
-                "聊天框上方那个「选择模型」列表，内容来自模型目录（assets/model_catalog_builtin.json 与它的缓存）："
-              + "自动 / 深度 / 轻量。模块把目录里的 default_tier_id 改成了你在上方「默认档位」里选的项"
-              + "（默认是轻量），所以新开会话默认落在你选的档位；想默认走自动/深度/自定义，在开关页选一下即可。"
-              + "轻量是 free、不扣点数，自动/深度按 0.5x 计点。");
-        card(root, "多出来一个「自定义」",
-                "列表里会多出第四项「自定义」，描述中带你的接口地址，选中即走你自己配的 API，模型 id 取「模型设置」里的模型名称。\n\n"
-              + "它是 free、不计点数。还没配自定义模型时，这一项指向占位 id，选中会提示模型不存在——先配好再用。");
-        card(root, "什么时候生效",
-                "目录在 Aicy 冷启动时加载（内置 json 或缓存键 model_catalog_remote_json），模块在这两处都做了改写，"
-              + "所以改完要强停 Aicy 再打开。日志里能看到 catalog rewrite armed / catalog patched via asset|pref。");
-
-        section(root, "5 · 拦截逻辑（默认行为）");
-        card(root, "日志 / 遥测：始终断掉（可在开关里关）",
-                "UXIP 打点与 Savior 上报被 DNS 层拦截，开发者工具里的日志上传因此发不出去：\n"
-              + "  uxip.meizu.com / uxip-config / uxip-res\n"
-              + "  api-savior.meizu.com（崩溃与补丁上报）\n\n"
-              + "拦截点在 java.net.InetAddress 解析，跟 HTTP 引擎无关（Ktor/OkHttp 都绕不过）；"
-              + "日志里会打 BLOCKED egress …/log-upload。");
-        card(root, "云模型在用时：对话不拦",
-                "没配自定义模型时，普通对话完全走魅族云，全部放行：\n"
-              + "  voice.meizu.com/…/llm/chat-messages（对话）\n"
-              + "  llm-router-web.flyme.com（路由）\n"
-              + "  g.meizu.com/…/model.do（模型列表 / 档位）\n\n"
-              + "也就是说，只要你用的是 Aicy 自带模型，体验和原版一致。");
-        card(root, "自定义模型生效时：切断魅族出口",
-                "检测到 model.providerPreset=custom 或 model.apiUrl 指向非魅族域名后，拦截：\n"
-              + "  voice.meizu.com（对话上传）\n"
-              + "  llm-router-web.flyme.com（路由）\n"
-              + "  g.meizu.com（模型列表）\n"
-              + "  credits-api.flyme.com（用量上报）\n"
-              + "  skill-hub / mcp-gw / aider.flyme.com（技能与工具网关）\n\n"
-              + "登录、账号、OAuth 域名保留，不影响登录状态。被拦的请求会写进日志（BLOCKED egress）。\n\n"
-              + "判定每 3 秒刷新一次，改完模型设置会自动切模式，日志里能看到 mode = CLOUD / CUSTOM。");
-
-        section(root, "6 · 电源键走哪个模型");
-        card(root, "共用同一套全局配置",
-                "Aicy 设置里的「电源键唤醒」只是开关（pref: power_key_wakeup），长按电源键唤起的是 QuickVoice 浮层，它读取的就是同一套 model.* 配置。\n\n"
-              + "所以：把「模型设置」里的自定义模型配好，电源键唤起就是用它；电源键那侧的档位列表同样多出「自定义」，默认档位也跟随你在开关页选的那一项。");
-
-        section(root, "7 · 自定义唤醒词");
-        card(root, "入口",
-                "打开 Aicy → 我的 → 设置 → 语音唤醒。开关开着时，这个入口会直接进入 Aicy 隐藏的「自定义唤醒词」页面："
-              + "录入 / 重录唤醒词，或从建议词里选一个。\n\n"
-              + "关掉开关后，这个入口恢复成系统原来的语音唤醒页，已录入的自定义唤醒词仍保留。");
-
-        section(root, "8 · 常见问题");
-        faq(root, "设置里没有「模型设置」",
-                "先看本页上方的日志顺序：没有 module loaded → 模块没注入；有 module loaded 但 probe/missing → 目标版本不同；有 hooked 但界面没变 → 把日志发我。另检查是否装了没强停 Aicy。");
-        faq(root, "日志里没有 AicyUnlock",
-                "模块根本没注入。检查：模块是否启用、作用域是否包含 com.meizu.voiceassistant（用上方按钮申请）、Zygisk 是否开启、Aicy 是否被系统冻结/分身。");
-        faq(root, "测试连接失败",
-                "多半是地址或网络：用电脑局域网 IP 而不是 127.0.0.1；确认电脑防火墙放行 1234/11434；确认模型名称就是服务端 id。");
-        faq(root, "配了自定义，自带云模型也不能用了",
-                "这是预期：一旦判定为自定义模式，魅族对话出口就被切断。想切回云模型，把服务商改回任意魅族内置项即可（下次请求 3 秒内自动切回 CLOUD）。");
-        faq(root, "Aicy 升级后还生效吗",
-                "核心逻辑不绑版本号：开关靠「mlkit_vision_common 包里静态布尔标志被关掉」这个结构特征发现并恢复，出口防火墙只依赖框架类与 model.* 配置键。只有 13.0.54 的精确类名（J3 / PhoneApp$… / settings/n0）用作加速路径，找不到会自动降级。日志里的 probe MISSING 说明这一版换了包名或字段结构。");
-        faq(root, "默认档位没生效 / 还在自动",
-                "目录是冷启动时读的：先在开关页选好「默认档位」，再强停 Aicy 再打开。日志里应有 catalog rewrite armed 与 catalog patched via …。"
-              + "若选了「自定义」但没配自定义模型，该档位不存在，会自动回落到轻量。");
-        faq(root, "选了「自定义」提示模型不存在",
-                "说明「模型设置」里的模型名称还是空的。先填真实模型 id（LM Studio 里复制出来的那个），再强停重开 Aicy。");
-        faq(root, "想彻底回滚",
-                "管理器里停用模块并强行停止 Aicy，即恢复原样；卸载本 APK 也可以。模块不修改 Aicy 的任何文件。");
-        faq(root, "唤醒词想恢复系统原来的页面",
-                "在开关页关掉「自定义唤醒词」，再强停 Aicy 重开即可。自定义唤醒词本身由 Aicy 保存，关掉入口不会删除已录入的词。");
-
-        section(root, "9 · 快捷操作");
+        section(root, "快捷操作");
         rowButtons(root);
+        aboutCard(root);
 
         TextView footer = new TextView(this);
-        footer.setText("Aicy Unlock " + versionName() + " · 仅在本机对 com.meizu.voiceassistant 生效\n"
-                + "钩子只在内存里改运行状态，不改 APK、不改数据、不上传任何内容。");
+        footer.setText("钩子只在内存里运行 · 不修改 Aicy 的 APK 与数据");
         footer.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f);
         footer.setTextColor(0xFF6B7076);
         footer.setPadding(dp(4), dp(18), dp(4), 0);
@@ -330,9 +329,8 @@ public final class MainActivity extends Activity {
         card.addView(t);
 
         TextView body = new TextView(this);
-        body.setText("模块声明 staticScope=false，作用域可以随时改。"
-                + "点下面的按钮通过框架服务直接申请 com.meizu.voiceassistant，"
-                + "管理器弹一次确认，之后一直生效；也可以在管理器里手动勾选。");
+        body.setText("模块不锁死作用域。点下面的按钮通过框架服务申请 "
+                + AICY_PACKAGE + "，管理器确认一次即可；也可以在管理器里手动勾选。");
         body.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
         body.setTextColor(TEXT);
         body.setLineSpacing(dp(4), 1f);
@@ -459,15 +457,36 @@ public final class MainActivity extends Activity {
     // ---------------- building blocks ----------------
 
     private void header(LinearLayout root) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+
         TextView title = new TextView(this);
         title.setText("Aicy Unlock");
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26f);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setTextColor(0xFFFFFFFF);
-        root.addView(title);
+        row.addView(title, new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView github = new TextView(this);
+        github.setText("GitHub ↗");
+        github.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f);
+        github.setTextColor(0xFFC7D2FE);
+        github.setGravity(Gravity.CENTER);
+        github.setPadding(dp(12), dp(7), dp(12), dp(7));
+        GradientDrawable chip = new GradientDrawable();
+        chip.setCornerRadius(dp(18));
+        chip.setColor(0xFF232326);
+        chip.setStroke(dp(1), 0xFF3F3F52);
+        github.setBackground(chip);
+        github.setOnClickListener(v -> openUrl(GITHUB_URL));
+        row.addView(github);
+
+        root.addView(row);
 
         TextView sub = new TextView(this);
-        sub.setText("LSPosed 使用指引 · 解锁 Aicy 自定义模型");
+        sub.setText("LSPosed 模块 · 自定义模型 / 音色 / 通知播报");
         sub.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
         sub.setTextColor(MUTED);
         sub.setPadding(0, dp(6), 0, dp(16));
@@ -489,7 +508,7 @@ public final class MainActivity extends Activity {
         statusRow(card, "作用域", AICY_PACKAGE, TEXT);
         statusRow(card, "本机 Aicy", version, installed ? OK : WARN);
         statusRow(card, "框架要求", "libxposed API 101+（Vector ≥2.1 / LSPosed 2.x）", TEXT);
-        statusRow(card, "模块状态", "请在上方日志中确认 reveal armed", MUTED);
+        statusRow(card, "模块状态", "见下方「诊断」", MUTED);
         root.addView(card);
     }
 
@@ -535,16 +554,15 @@ public final class MainActivity extends Activity {
         LinearLayout card = cardContainer();
 
         addSwitch(card, ConfigProvider.KEY_MASTER, "总开关",
-                "关掉后所有钩子空转：不拦网络、不改目录。已露出的「模型设置」入口要重启 Aicy 才会收回。");
+                "关掉后所有钩子空转：不拦网络、不改目录。");
         addSwitch(card, ConfigProvider.KEY_LOG, "拦截日志 / 遥测上传",
-                "uxip.meizu.com、api-savior.meizu.com 等。开发者工具里的日志上传、UXIP 打点走这些域名，一律断掉。");
+                "断开 uxip / savior，日志上传和打点发不出去。");
         addSwitch(card, ConfigProvider.KEY_CHAT, "拦截对话出口（仅自定义模型时）",
-                "voice.meizu.com / llm-router-web / g.meizu.com / credits-api。用自带云模型时不会拦。");
+                "仅在自定义模型生效时切断魅族对话出口。");
         addSwitch(card, ConfigProvider.KEY_CATALOG, "模型目录改写（默认轻量 + 自定义档位）",
-                "把 default_tier_id 改成 chat-lite，并追加一项「自定义」。");
+                "默认档位改为轻量，并追加「自定义」档。");
         addSwitch(card, ConfigProvider.KEY_ONLY_CUSTOM, "只有「自定义」档位走自建 API（实验）",
-                "Aicy 的 BYOK 是全局覆盖，开了这个开关后，选其他档位时模块会对 App 隐藏 apiUrl，让它回落到魅族云。"
-                        + "副作用：进「模型设置」时地址栏会显示为空。");
+                "选其他档位时对 Aicy 隐藏 apiUrl，回落到魅族云；此时「模型设置」地址栏会显示为空。");
 
         root.addView(card);
     }
@@ -557,6 +575,8 @@ public final class MainActivity extends Activity {
         LinearLayout card = cardContainer();
         addSwitch(card, ConfigProvider.KEY_WAKE_WORD,
                 "自定义唤醒词（Aicy 设置 → 语音唤醒）", null);
+        addSwitch(card, ConfigProvider.KEY_WAKE_TONE,
+                "唤醒提示音", "语音唤醒和长按电源键唤起 Aicy 时，播一次 Aicy 自带的「我在听」提示音（12.5 那样）。");
         addSwitch(card, ConfigProvider.KEY_TASK_ROBOT,
                 "任务机器人联动（打开X搜索Y）", null);
 
@@ -663,11 +683,10 @@ public final class MainActivity extends Activity {
         card.addView(title);
 
         TextView note = new TextView(this);
-        note.setText("Aicy 13.0.56 把「模型设置」那一行从列表里删掉了，但页面本身还在。"
-                + "打开下面的开关，设置里的「设备」分组就会变成 Aicy 原生的「模型设置」页："
-                + "在那里选「自定义」、填地址 / Key / 模型名并保存。\n\n"
-                + "这份配置是 Aicy 自己写进去的，所以一定生效；填完把开关关掉，「设备」分组就恢复。\n"
-                + "地址用电脑的局域网 IP（比如 192.168.1.21:1234/v1），不是 127.0.0.1。");
+        note.setText("13.0.56 删掉了「模型设置」入口，但页面还在。打开开关后，"
+                + "设置里的「设备」分组会变成 Aicy 原生的「模型设置」页；"
+                + "填好地址 / Key / 模型名并保存，再回来关掉开关即可。\n"
+                + "地址填电脑的局域网 IP（如 192.168.1.21:1234/v1），不是 127.0.0.1。");
         note.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f);
         note.setTextColor(MUTED);
         note.setLineSpacing(dp(4), 1f);
@@ -696,9 +715,8 @@ public final class MainActivity extends Activity {
         card.addView(title);
 
         TextView note = new TextView(this);
-        note.setText("Aicy 冷启动时按模型目录里的 default_tier_id 选默认档位，模块帮你改成下面选中的项。"
-                + "选「自定义」需要先配好自定义模型（否则该档位不存在，会自动回落到轻量）。"
-                + "改完强停 Aicy 再打开生效。");
+        note.setText("模块会改写模型目录的 default_tier_id。"
+                + "选「自定义」前先配好自定义模型；改完强停 Aicy 生效。");
         note.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f);
         note.setTextColor(MUTED);
         note.setLineSpacing(dp(4), 1f);
@@ -830,24 +848,16 @@ private void voiceCard(LinearLayout root) {
         card.addView(title);
 
         TextView note = new TextView(this);
-        note.setText("可以建多条音色，Aicy 的「声音」里每条占一行。选中哪条，朗读就走那条的设置，"
-                + "在本机调 MiMo 合成后再按 Aicy 的协议喂回去——不经过魅族服务器。\n\n"
-                + "接口：默认 https://api.xiaomimimo.com/v1，可在下面换成任何兼容的代理地址"
-                + "（OpenAI chat/completions + 流式音频，Bearer 鉴权）\n"
-                + "模型：\n"
-                + "  mimo-v2.5-tts-voicedesign   文字描述造音色\n"
-                + "  mimo-v2.5-tts-voiceclone    音频样本复刻音色（mp3 / wav）\n"
-                + "  mimo-v2.5-tts               预置音色（冰糖 / 茉莉 / 苏打 / 白桦 等）\n\n"
-                + "计费：官方文档标注「限时免费」，未公布单价与免费时长，"
-                + "用量与账单在 platform.xiaomimimo.com 控制台 → 账单明细查看。"
-                + "本模块本身不收费。\n\n"
-                + "还没 Key：https://platform.xiaomimimo.com?ref=CCZX36"
-                + "（邀请码 CCZX36，双方各得 ¥10 体验金，首单 9 折，体验金 40 天有效）");
+        note.setText("每条音色会出现在 Aicy 的「声音」列表里，选中后由本机调用 MiMo 合成，"
+                + "不经过魅族服务器。支持预置、文字描述、音频复刻。\n"
+                + "Key 只保存在本机，模块不收费。");
         note.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f);
         note.setTextColor(MUTED);
         note.setLineSpacing(dp(4), 1f);
         note.setPadding(0, dp(8), 0, dp(6));
         card.addView(note);
+
+        infoRow(card, "MiMo 接口、模型与计费", "接口地址、三种模型、邀请码", GUIDE_MIMO);
 
         card.addView(label("API 地址（所有音色共用）"));
         mimoEndpointInput = new EditText(this);
@@ -894,7 +904,7 @@ private void voiceCard(LinearLayout root) {
 
         // Registration / console entry point. The referral code rides in the URL,
         // so the user does not have to type it.
-        TextView openPlatform = button("打开 MiMo 开放平台（邀请码 CCZX36）",
+        TextView openPlatform = button("打开 MiMo 开放平台",
                 v -> openUrl(MIMO_PLATFORM_REF));
         LinearLayout.LayoutParams openLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -902,11 +912,9 @@ private void voiceCard(LinearLayout root) {
         card.addView(openPlatform, openLp);
 
         TextView invite = new TextView(this);
-        invite.setText("还没 Key？通过邀请码 CCZX36 注册，双方各得 ¥10 API 体验金"
-                + "（首单 9 折，体验金 40 天有效）。点上面的按钮，链接已带码。");
+        invite.setText("还没 Key？邀请码 CCZX36，双方各得 ¥10 体验金，按钮链接已带码。");
         invite.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f);
         invite.setTextColor(0xFF6B7076);
-        invite.setLineSpacing(dp(3), 1f);
         invite.setPadding(0, dp(6), 0, dp(10));
         card.addView(invite);
 
@@ -2220,10 +2228,10 @@ private void voiceCard(LinearLayout root) {
         long at = sp.getLong(DiagReceiver.KEY_AT, 0L);
         String body;
         if (log == null || log.trim().isEmpty()) {
-            body = "还没收到 Aicy 进程的任何报告 —— 说明模块没有注入进去。\n\n"
-                 + "依次查：模块已启用 → 作用域含 com.meizu.voiceassistant（点下面按钮申请）"
-                 + "→ Zygisk 已开 → 装完强停过 Aicy。\n\n"
-                 + "注入成功后这里会显示 module loaded / hooks armed / catalog patched via …。";
+            body = "还没收到 Aicy 进程的报告 —— 模块没有注入。\n\n"
+                 + "检查：模块已启用 → 作用域含 com.meizu.voiceassistant"
+                 + "→ Zygisk 已开启 → 强停过 Aicy。\n\n"
+                 + "注入成功后这里会显示 module loaded / hooks armed / catalog patched。";
         } else {
             String when = new java.text.SimpleDateFormat("MM-dd HH:mm:ss",
                     java.util.Locale.CHINA).format(new java.util.Date(at));
@@ -2295,34 +2303,94 @@ private void voiceCard(LinearLayout root) {
         root.addView(row);
     }
 
-    private void faq(LinearLayout root, String q, String a) {
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(14), dp(12), dp(14), dp(12));
-        GradientDrawable bg = new GradientDrawable();
-        bg.setCornerRadius(dp(12));
-        bg.setColor(CARD_SOFT);
-        card.setBackground(bg);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.bottomMargin = dp(8);
-        card.setLayoutParams(lp);
+    private void infoRow(LinearLayout card, String title, String subtitle, String body) {
+        linkRow(card, title, subtitle, body, TEXT, 13.5f);
+    }
 
-        TextView qt = new TextView(this);
-        qt.setText("Q  " + q);
-        qt.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
-        qt.setTypeface(Typeface.DEFAULT_BOLD);
-        qt.setTextColor(WARN);
-        card.addView(qt);
+    private void questionRow(LinearLayout card, String question, String answer) {
+        linkRow(card, question, null, answer, WARN, 13f);
+    }
 
-        TextView at = new TextView(this);
-        at.setText(a);
-        at.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f);
-        at.setTextColor(MUTED);
-        at.setLineSpacing(dp(3), 1f);
-        at.setPadding(0, dp(5), 0, 0);
-        card.addView(at);
+    private void linkRow(LinearLayout card, String title, String subtitle, String body,
+                         int titleColor, float titleSize) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setPadding(0, dp(10), 0, dp(10));
+        row.setOnClickListener(v -> showInfoDialog(title, body));
 
+        LinearLayout texts = new LinearLayout(this);
+        texts.setOrientation(LinearLayout.VERTICAL);
+        row.addView(texts, new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView t = new TextView(this);
+        t.setText(title);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, titleSize);
+        t.setTypeface(Typeface.DEFAULT_BOLD);
+        t.setTextColor(titleColor);
+        texts.addView(t);
+
+        if (subtitle != null && !subtitle.isEmpty()) {
+            TextView s = new TextView(this);
+            s.setText(subtitle);
+            s.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f);
+            s.setTextColor(MUTED);
+            s.setPadding(0, dp(2), dp(8), 0);
+            texts.addView(s);
+        }
+
+        TextView arrow = new TextView(this);
+        arrow.setText("›");
+        arrow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
+        arrow.setTextColor(MUTED);
+        arrow.setPadding(dp(10), 0, dp(2), 0);
+        row.addView(arrow);
+
+        card.addView(row);
+    }
+
+    private void showInfoDialog(String title, String body) {
+        TextView text = new TextView(this);
+        text.setText(body);
+        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f);
+        text.setTextColor(TEXT);
+        text.setLineSpacing(dp(4), 1f);
+        text.setPadding(dp(22), dp(8), dp(22), dp(4));
+        text.setTextIsSelectable(true);
+
+        ScrollView scroll = new ScrollView(this);
+        scroll.addView(text);
+
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(scroll)
+                .setPositiveButton("关闭", null)
+                .show();
+    }
+
+    private void aboutCard(LinearLayout root) {
+        section(root, "关于");
+        LinearLayout card = cardContainer();
+        statusRow(card, "版本", "Aicy Unlock " + versionName(), TEXT);
+        statusRow(card, "范围", "仅作用于 " + AICY_PACKAGE, MUTED);
+        statusRow(card, "数据", "钩子只在内存里运行，不上传内容", MUTED);
+
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams left = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        left.topMargin = dp(14);
+        row.addView(button("GitHub 项目主页 ↗", v -> openUrl(GITHUB_URL)), left);
+
+        LinearLayout.LayoutParams right = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        right.topMargin = dp(14);
+        right.leftMargin = dp(8);
+        row.addView(button("反馈问题 ↗", v -> openUrl(ISSUES_URL)), right);
+
+        card.addView(row);
         root.addView(card);
     }
 
@@ -2369,8 +2437,7 @@ private void voiceCard(LinearLayout root) {
         card.addView(head);
 
         TextView note = new TextView(this);
-        note.setText("拖动时轨道会轻微收窄、填充从手柄后面涌出来；拖出两端会像橡皮筋一样拉伸，"
-                + "整条轨跟着轻轻位移，松手回弹。拖到底过冲吸附，涟漪扩散，3 秒环形倒计时，随时可取消。");
+        note.setText("拖到尽头松手吸附，3 秒环形倒计时，随时可取消；拖出两端会回弹。");
         note.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f);
         note.setTextColor(0xFF8A8E99);
         note.setLineSpacing(dp(3), 1f);

@@ -47,6 +47,8 @@ public final class ConfigProvider extends ContentProvider {
     static final String KEY_REVEAL_MODEL = "reveal_model";
     /** Routes Aicy's stock wake-word page to its hidden custom keyphrase page. */
     static final String KEY_WAKE_WORD = "wake_word";
+    /** Plays Aicy's own {@code raw/tone_start} when the voice sheet appears. */
+    static final String KEY_WAKE_TONE = "wake_tone";
     /** Hands "打开X搜索Y" sentences to the Flyme task robot's UI agent. */
     static final String KEY_TASK_ROBOT = "task_robot";
 
@@ -164,6 +166,7 @@ public final class ConfigProvider extends ContentProvider {
         cursor.addRow(new Object[]{KEY_REVEAL_MODEL,
                 sp.getBoolean(KEY_REVEAL_MODEL, false) ? 1 : 0, ""});
         cursor.addRow(new Object[]{KEY_WAKE_WORD, sp.getBoolean(KEY_WAKE_WORD, true) ? 1 : 0, ""});
+        cursor.addRow(new Object[]{KEY_WAKE_TONE, sp.getBoolean(KEY_WAKE_TONE, true) ? 1 : 0, ""});
         cursor.addRow(new Object[]{KEY_TASK_ROBOT, sp.getBoolean(KEY_TASK_ROBOT, true) ? 1 : 0, ""});
 
         cursor.addRow(new Object[]{KEY_TTS_ENABLE, sp.getBoolean(KEY_TTS_ENABLE, true) ? 1 : 0, ""});

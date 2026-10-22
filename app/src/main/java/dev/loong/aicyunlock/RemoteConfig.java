@@ -36,6 +36,7 @@ final class RemoteConfig {
     private static boolean sCatalog = true;
     private static boolean sOnlyCustomTier = true;
     private static boolean sWakeWord = true;
+    private static boolean sWakeTone = true;
     private static boolean sTaskRobot = true;
     private static boolean sTtsEnabled = true;
     private static String sTtsEndpoint = MiMoTts.DEFAULT_ENDPOINT;
@@ -108,6 +109,12 @@ final class RemoteConfig {
     static boolean wakeWord() {
         refresh();
         return sWakeWord;
+    }
+
+    /** Plays Aicy's own listening tone when its voice sheet appears. */
+    static boolean wakeTone() {
+        refresh();
+        return sWakeTone;
     }
 
     /** Hands "打开X搜索Y" sentences to the Flyme task robot's UI agent. */
@@ -351,6 +358,7 @@ final class RemoteConfig {
                     case "catalog": sCatalog = value; break;
                     case "only_custom_tier": sOnlyCustomTier = value; break;
                     case "wake_word": sWakeWord = value; break;
+                    case ConfigProvider.KEY_WAKE_TONE: sWakeTone = value; break;
                     case ConfigProvider.KEY_TASK_ROBOT: sTaskRobot = value; break;
                     case "default_tier":
                         sDefaultTier = text == null || text.isEmpty()
