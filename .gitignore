@@ -17,8 +17,5 @@ pulltmp/
 .workbuddy/
 *.log
 
-# Skill import packages (source lives in skills/<name>/)
-skills/*.zip
-
 # Tooling caches
 __pycache__/
