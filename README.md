@@ -2,7 +2,7 @@
 
 **让 Aicy 助手用上你自己的模型，并且只在你的接口上说话。**
 
-Aicy 助手 13.0.54–13.0.56 内置了完整的「模型设置」页面，但入口被隐藏；即使配置了自定义模型，对话、模型目录和用量上报仍可能发往魅族云。Aicy Unlock 是一个 LSPosed 模块，在 Aicy 进程内做两件事：
+Aicy 助手 13.0.54–13.0.55 内置了完整的「模型设置」页面，但入口被隐藏；即使配置了自定义模型，对话、模型目录和用量上报仍可能发往魅族云。Aicy Unlock 是一个 LSPosed 模块，在 Aicy 进程内做两件事：
 
 - 露出隐藏的「模型设置」，让你填写 OpenAI 兼容接口；
 - 自定义模型生效时切断魅族出口，登录 / OAuth 保持可用。
@@ -27,7 +27,7 @@ Aicy 助手 13.0.54–13.0.56 内置了完整的「模型设置」页面，但�
 | 项目 | 要求 |
 | --- | --- |
 | 手机 | MEIZU 21 / 22 系列，Flyme 12.6（Android 16）实测 |
-| Aicy | 13.0.54–13.0.56（`com.meizu.voiceassistant`） |
+| Aicy | 13.0.54–13.0.57（`com.meizu.voiceassistant`） |
 | Root | Magisk 27+ / KernelSU / APatch，开启 Zygisk |
 | 框架 | LSPosed 2.x 或 Vector 2.1+；LSPosed 1.9.2（API 100）也可载入 |
 | 作用域 | `com.meizu.voiceassistant`（模块内可一键申请） |
