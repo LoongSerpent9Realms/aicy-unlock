@@ -1,0 +1,24 @@
+# Build outputs
+.gradle/
+build/
+app/build/
+dist/
+*.apk
+*.idsig
+
+# Local machine configuration
+local.properties
+.gradle-local/
+
+# Device scratch: UI dumps, screenshots, pulled APKs and logs
+/*.xml
+/*.png
+pulltmp/
+.workbuddy/
+*.log
+
+# Skill import packages (source lives in skills/<name>/)
+skills/*.zip
+
+# Tooling caches
+__pycache__/

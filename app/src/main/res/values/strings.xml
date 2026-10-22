@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aicy Unlock</string>
+    <string name="xposed_description">Reveals Aicy custom model (BYOK) settings and its hidden custom wake-word page. Blocks Meizu conversation/upload egress only while a custom model is active; stock cloud chat is untouched.</string>
+</resources>

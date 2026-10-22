@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.loong.aicyunlock">
+
+    <queries>
+        <package android:name="com.meizu.voiceassistant" />
+        <package android:name="org.lsposed.manager" />
+        <!-- The notification allow-list needs to see launcher apps. Without
+             this, Android 11+ only exposes the packages declared above. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Keeps the fallback listener's announcement worker scheduled while the
+         screen is off; Aicy already holds this permission on the primary path. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:description="@string/xposed_description"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <!-- libxposed/service: how the manager talks to this module app.
+             Authority must stay ${applicationId}.XposedService. -->
+        <provider
+            android:name="io.github.libxposed.service.XposedProvider"
+            android:authorities="${applicationId}.XposedService"
+            android:exported="true"
+            android:enabled="true" />
+
+        <!-- Switch state for the hooked process (unreadable by uid, so exposed
+             through a provider instead). -->
+        <provider
+            android:name=".ConfigProvider"
+            android:authorities="${applicationId}.cfg"
+            android:exported="true"
+            android:enabled="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".RecordActivity"
+            android:exported="false"
+            android:label="录音复刻音色" />
+
+        <!-- Power slider host for the Aicy skill card. The card button is a
+             deep_link to aicyunlock://power-confirm?action=shutdown|reboot|cancel,
+             so skill -> card -> slider works without root. -->
+        <activity
+            android:name=".PowerActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="power-confirm"
+                    android:scheme="aicyunlock" />
+            </intent-filter>
+        </activity>
+
+        <!-- Notification read-aloud. The system binds this once the user grants
+             通知使用权; the BIND permission is what keeps other apps out. -->
+        <service
+            android:name=".NotificationSpeechService"
+            android:exported="true"
+            android:label="通知播报"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>

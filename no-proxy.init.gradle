@@ -1,0 +1,4 @@
+// Temporary build-time override: the local proxy at 127.0.0.1:7892 is not running.
+// Bypass it so dependency resolution uses the direct connection.
+System.setProperty('http.nonProxyHosts', 'localhost|127.*|[::1]|*')
+System.setProperty('https.nonProxyHosts', 'localhost|127.*|[::1]|*')

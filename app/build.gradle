@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+android {
+    namespace 'dev.loong.aicyunlock'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'dev.loong.aicyunlock'
+        minSdk 26
+        targetSdk 35
+        versionCode 75
+        versionName '2.8.11'
+    }
+    buildTypes {
+        debug { minifyEnabled false }
+        release { minifyEnabled false }
+    }
+    lint {
+        // The lint-gradle artifact is fetched from dl.google.com at build
+        // time; the machine proxy is not always up, and lint has never been
+        // part of the release gate here.
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    compileOnly files('libs/api.aar')
+    implementation files('libs/service.jar', 'libs/interface.jar')
+}

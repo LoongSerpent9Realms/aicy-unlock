@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#4F46E5</color>
+    <color name="module_background">#121212</color>
+    <color name="module_text">#E6E6E6</color>
+    <color name="module_muted">#B3B3B3</color>
+</resources>
